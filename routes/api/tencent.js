@@ -10,12 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const router = require('express').Router();
-const AV = require('leanengine');
 const TencentSdk = require('../../services/tencent');
-const tencent_sdk = new TencentSdk({
-    secretId: "AKIDiMutlRzMYeYIwS8ew2zmOr98yb3JNF2f",
-    secretKey: "WqyjJhwzugK0Vlz51scL0TkCTbYJVXTL"
-});
+const tencent_sdk = new TencentSdk();
 router.post('/txVoice2Text', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const params = req.body;
     let { base64, file_size, voice_type = 'wav' } = params;

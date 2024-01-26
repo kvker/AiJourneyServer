@@ -1,11 +1,7 @@
 import { Request, Response } from "express"
 const router = require('express').Router()
-const AV = require('leanengine')
 const TencentSdk = require('../../services/tencent')
-const tencent_sdk = new TencentSdk({
-  secretId: "AKIDiMutlRzMYeYIwS8ew2zmOr98yb3JNF2f",
-  secretKey: "WqyjJhwzugK0Vlz51scL0TkCTbYJVXTL"
-})
+const tencent_sdk = new TencentSdk()
 interface TxVoiceParams {
   base64: string
   file_size: number
