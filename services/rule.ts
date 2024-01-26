@@ -13,7 +13,6 @@ const rule: Rule = {
   is_dev,
   warning_string: '因相关法律和要求，相关提问信息不予展示。（包含黄赌毒、港台等地缘信息）',
   is_stage,
-  hk_address: process.env.HKAddress as string,
   bj_api_address: process.env.BJAPIAddress as string,
   headers: {
     'X-LC-Id': process.env.LEANCLOUD_APP_ID,

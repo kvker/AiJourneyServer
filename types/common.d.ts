@@ -106,7 +106,6 @@ interface Rule {
   is_dev: boolean,
   warning_string: string,
   is_stage: boolean,
-  hk_address: url,
   bj_api_address: url,
   headers: {
     'X-LC-Id': string | undefined

@@ -16,6 +16,16 @@
 
 其中 LeanCloud 有兴趣的可以提供账号给我，我加你开发权限。
 
+## 环境变量配置
+
+BJAPIAddress 这是获取统一的令牌, 如获取智谱AI的token, 避免使用冲突
+
+SeniverseKEY 获取心知天气的key
+
+TencentSDKSecretId 腾讯云的id
+
+TencentSDKSecretKey 腾讯云的key
+
 ## 待办
 
 - [ ] 暂无
