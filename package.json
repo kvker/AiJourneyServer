@@ -1,0 +1,63 @@
+{
+  "name": "step-ai-sse",
+  "version": "0.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "debug": "cross-env NODE_ENV=development node ./bin/dev",
+    "dev": "cross-env NODE_ENV=development nodemon ./bin/dev",
+    "start": "node ./bin/release",
+    "build": "cd views && npm run build",
+    "pm2": "pm2 start npm -n AIGM -- run start",
+    "restart": "pm2 restart AIGM; pm2 log"
+  },
+  "dependencies": {
+    "@types/express": "^4.17.17",
+    "@types/node": "^18.15.11",
+    "alipay-sdk": "^3.6.1",
+    "axios": "^1.5.0",
+    "connect-timeout": "^1.9.0",
+    "cookie-parser": "~1.4.4",
+    "cos-nodejs-sdk-v5": "^2.12.6",
+    "crypto": "^1.0.1",
+    "debug": "~2.6.9",
+    "ejs": "^3.1.8",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "jsonwebtoken": "^9.0.0",
+    "leancloud-storage": "^4.15.0",
+    "leanengine": "^3.8.0",
+    "morgan": "~1.9.1",
+    "tencentcloud-sdk-nodejs": "^4.0.707",
+    "tencentcloud-sdk-nodejs-tts": "^4.0.707",
+    "urllib": "^3.11.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.1",
+    "chai": "^4.3.8",
+    "cross-env": "^7.0.3",
+    "mocha": "^10.2.0",
+    "nodemon": "^2.0.19",
+    "typescript": "^4.8.4"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      ".git",
+      "node_modules",
+      ".gitignore"
+    ],
+    "watch": [
+      "app.js",
+      "routes/",
+      "bin/",
+      "services/",
+      "@typings/"
+    ],
+    "env": {
+      "NODE_ENV": "development"
+    },
+    "ext": "js,json"
+  }
+}

@@ -1,0 +1,10 @@
+node_modules/
+package-lock.json
+content.txt
+data.txt
+output.json
+messages.json
+current_app_id
+current_group
+.leancloud
+.vscode

@@ -1,0 +1,12 @@
+<script src="/lib/localforage.min.js"></script>
+<% if (typeof scripts !== 'undefined') { %>
+  <% scripts.forEach(function(script) { %>
+  <script src="<%= script %>"></script>
+  <% }) %>
+<% } %>
+<script src="/lib/vconsole.js"></script>
+<script>
+  new VConsole()
+</script>
+</body>
+</html>
