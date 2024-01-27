@@ -70,7 +70,7 @@ const rule: Rule = {
     text = text.replace(/chatgpt/ig, 'GPT')
     return text
   },
-  // 通用错误返回
+  // 通用成功返回
   success: (data: any, code = 200, msg = 'success') => {
     return {
       code,
@@ -79,7 +79,7 @@ const rule: Rule = {
     }
   },
   // 通用失败返回
-  fail: (error: Error, code = 0, msg = 'error') => {
+  fail: (error: Error, code = 400, msg = 'error') => {
     if (typeof (error) === 'string') msg = error
     return {
       code,
