@@ -44,12 +44,12 @@ app.use(cookieParser())
 // app.use(express.static(path.join(__dirname, 'public')))
 
 // express放行跨域
-// app.all('*', function (req, res, next) {
-//   res.header('Access-Control-Allow-Origin', '*')
-//   res.header('Access-Control-Allow-Headers', '*')
-//   res.header('Access-Control-Allow-Methods', '*')
-//   next()
-// })
+app.all('*', function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Headers', '*')
+  res.header('Access-Control-Allow-Methods', '*')
+  next()
+})
 
 app.options('*', function (req, res) {
   res.sendStatus(200)
