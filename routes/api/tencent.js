@@ -48,15 +48,4 @@ router.post('/txText2Voice', (req, res) => __awaiter(void 0, void 0, void 0, fun
         res.status(400).send(error);
     }
 }));
-// TODO 资源包没有 长文本回调
-router.post('/longText2VoiceCallback', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const params = req.body;
-    console.log(params);
-    try {
-        res.send(rule.success('成功'));
-    }
-    catch (error) {
-        res.status(400).send(error);
-    }
-}));
 module.exports = router;

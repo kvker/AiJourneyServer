@@ -60,17 +60,4 @@ router.post('/txText2Voice', async (req: Request, res: Response) => {
   }
 })
 
-
-// TODO 资源包没有 长文本回调
-router.post('/longText2VoiceCallback', async (req: Request, res: Response) => {
-  const params = req.body as TxText2VoiceParams
-
-  console.log(params)
-  try {
-    res.send(rule.success('成功'))
-  } catch (error) {
-    res.status(400).send(error)
-  }
-})
-
 module.exports = router
