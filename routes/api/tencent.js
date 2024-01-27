@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const router = require('express').Router();
 const TencentSdk = require('../../services/tencent');
-const tencent_sdk = new TencentSdk();
+const tencentSdk = new TencentSdk();
 router.post('/txVoice2Text', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const params = req.body;
     let { base64, file_size, voice_type = 'wav' } = params;
@@ -20,7 +20,7 @@ router.post('/txVoice2Text', (req, res) => __awaiter(void 0, void 0, void 0, fun
         return;
     }
     try {
-        let ret = yield tencent_sdk.voice2Text({ base64, file_size, voice_type });
+        let ret = yield tencentSdk.voice2Text({ base64, file_size, voice_type });
         res.send(rule.success(ret));
     }
     catch (error) {
@@ -35,7 +35,7 @@ router.post('/txText2Voice', (req, res) => __awaiter(void 0, void 0, void 0, fun
         return;
     }
     try {
-        let ret = yield tencent_sdk.text2Voice({
+        let ret = yield tencentSdk.text2Voice({
             Text: text,
             Volume: volume,
             Speed: speed,

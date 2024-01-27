@@ -1,14 +1,14 @@
 import { Request, Response } from "express"
 const router = require('express').Router()
 const TencentSdk = require('../../services/tencent')
-const tencent_sdk = new TencentSdk()
-interface TxVoiceParams {
+const tencentSdk = new TencentSdk()
+type TxVoiceParams = {
   base64: string
   file_size: number
   voice_type: string
 }
 
-interface TxText2VoiceParams {
+type TxText2VoiceParams = {
   text: string
   volume: number
   speed: number
@@ -27,7 +27,7 @@ router.post('/txVoice2Text', async (req: Request, res: Response) => {
     return
   }
   try {
-    let ret = await tencent_sdk.voice2Text({ base64, file_size, voice_type })
+    let ret = await tencentSdk.voice2Text({ base64, file_size, voice_type })
     res.send(rule.success(ret))
   } catch (error) {
     res.status(400).send(error)
@@ -47,7 +47,7 @@ router.post('/txText2Voice', async (req: Request, res: Response) => {
     return
   }
   try {
-    let ret = await tencent_sdk.text2Voice({
+    let ret = await tencentSdk.text2Voice({
       Text: text,
       Volume: volume,
       Speed: speed,
