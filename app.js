@@ -9,10 +9,10 @@ const AV = require('leanengine')
 
 // 注意，这里由于最早从B端服务分流出来统一使用，所以这里默认的是B端的配置，如果需要使用A端的配置，需要在.env中配置或者用lean up启动项目
 let options = {
-  appId: process.env.LEANCLOUD_APP_ID || 'qPKjEvJAkZICC2saG07kZ0L0-gzGzoHsz',
-  appKey: process.env.LEANCLOUD_APP_KEY || 'VsTGAAa1LFtZqyri8zGTHs5o',
-  masterKey: process.env.LEANCLOUD_APP_MASTER_KEY || 'KuzGOYSeJT2XXIwKtmzTwHO1',
-  serverURL: process.env.LEANCLOUD_API_SERVER || 'https://sablcengine.kvker.com',
+  appId: process.env.LEANCLOUD_APP_ID,
+  appKey: process.env.LEANCLOUD_APP_KEY,
+  masterKey: process.env.LEANCLOUD_APP_MASTER_KEY,
+  serverURL: process.env.LEANCLOUD_API_SERVER,
 }
 
 AV.init(options)
