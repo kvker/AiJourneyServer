@@ -12,29 +12,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const axios = require('axios');
 module.exports = class ZhipuAI {
     constructor() {
-        this.Url = 'https://open.bigmodel.cn/api/paas/v3/model-api/chatglm_turbo/invoke';
-        this.SSEUrl = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
+        this.Url = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
     }
     getAccessToken() {
         return axios(rule.bj_api_address + '/api/access_token/zhipuai')
             .then((ret) => {
-            console.log(ret.data.data);
+            // console.log(ret.data.data)
             return ret.data.data;
         });
     }
-    completions(messages) {
+    completions(messages, options = { model: "glm-3-turbo", stream: true, }) {
         return __awaiter(this, void 0, void 0, function* () {
             const accessToken = yield this.getAccessToken();
-            // console.log(params)
-            // console.log(this.SSEUrl)
+            const { model, stream } = options;
             const data = {
-                model: "glm-3-turbo",
+                model,
                 messages,
                 max_tokens: 4096,
-                stream: true,
+                stream,
             };
-            console.log(JSON.stringify(data));
-            return yield axios.post(this.SSEUrl, data, {
+            // console.log(JSON.stringify(data))
+            return yield axios.post(this.Url, data, {
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": accessToken,
@@ -43,22 +41,22 @@ module.exports = class ZhipuAI {
             });
         });
     }
-    GLM2String(glm_ret) {
-        let data = glm_ret.data.data;
+    GLM2String(glmRet) {
+        let data = glmRet.data.data;
         // console.log(data)
-        if (glm_ret.data.code !== 200) {
-            console.error(glm_ret.data);
+        if (glmRet.data.code !== 200) {
+            console.error(glmRet.data);
             console.error('GLM官方返回的错误');
-            throw glm_ret.data;
+            throw glmRet.data;
         }
         let content = data.choices[0].content;
         return content.replace(/\\+n/g, '\n').replace(/\\+/g, '').replace(/\\"/g, '"').replace(/^[\s*\"\s*]*|[\s*\"\s*]*$/g, '');
     }
     // GLM返回的JSON字符串转JSON，这里返回的是Object
-    GLM2JSON(glm_ret) {
-        let data = glm_ret.data.data;
-        if (glm_ret.data.code !== 200) {
-            console.error(glm_ret.data);
+    GLM2JSON(glmRet) {
+        let data = glmRet.data.data;
+        if (glmRet.data.code !== 200) {
+            console.error(glmRet.data);
         }
         let content = data.choices[0].content;
         // console.log(content)
@@ -70,14 +68,12 @@ module.exports = class ZhipuAI {
         return JSON.parse(content);
     }
     // GLM返回的JSON字符串转JSON，这里返回的是Array
-    GLM2JSONArray(glm_ret) {
-        let data = glm_ret.data.data;
-        if (glm_ret.data.code !== 200) {
-            console.error(glm_ret.data);
+    GLM2JSONArray(glmRet) {
+        let data = glmRet.data.data;
+        if (glmRet.data.code !== 200) {
+            console.error(glmRet.data);
         }
         let content = data.choices[0].content.trim();
-        content = content.replace(/\\n/g, '\n');
-        console.log(content);
         console.log('转JSON的原始字符串');
         let result = [];
         let temp_item;

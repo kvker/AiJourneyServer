@@ -4,35 +4,33 @@ const axios = require('axios')
 
 interface ZhipuAIInterface {
   getAccessToken(): Promise<string>,
-  GLM2String(glm_ret: BaseObject): string,
-  GLM2JSON(glm_ret: BaseObject): BaseObject,
-  GLM2JSONArray(glm_ret: BaseObject): BaseObject[],
+  GLM2String(glmRet: BaseObject): string,
+  GLM2JSON(glmRet: BaseObject): BaseObject,
+  GLM2JSONArray(glmRet: BaseObject): BaseObject[],
 }
 
 module.exports = class ZhipuAI implements ZhipuAIInterface {
-  Url = 'https://open.bigmodel.cn/api/paas/v3/model-api/chatglm_turbo/invoke'
-  SSEUrl = 'https://open.bigmodel.cn/api/paas/v4/chat/completions'
+  Url = 'https://open.bigmodel.cn/api/paas/v4/chat/completions'
 
   getAccessToken(): Promise<string> {
     return axios(rule.bj_api_address + '/api/access_token/zhipuai')
       .then((ret: any) => {
-        console.log(ret.data.data)
+        // console.log(ret.data.data)
         return ret.data.data
       })
   }
 
-  async completions(messages: GLMMessage[]): Promise<any> {
+  async completions(messages: GLMMessage[], options = { model: "glm-3-turbo", stream: true, }): Promise<any> {
     const accessToken = await this.getAccessToken()
-    // console.log(params)
-    // console.log(this.SSEUrl)
+    const { model, stream } = options
     const data = {
-      model: "glm-3-turbo",
+      model,
       messages,
       max_tokens: 4096,
-      stream: true,
+      stream,
     }
-    console.log(JSON.stringify(data))
-    return await axios.post(this.SSEUrl, data, {
+    // console.log(JSON.stringify(data))
+    return await axios.post(this.Url, data, {
       headers: {
         "Content-Type": "application/json",
         "Authorization": accessToken,
@@ -41,23 +39,23 @@ module.exports = class ZhipuAI implements ZhipuAIInterface {
     })
   }
 
-  GLM2String(glm_ret: BaseObject): string {
-    let data = glm_ret.data.data
+  GLM2String(glmRet: BaseObject): string {
+    let data = glmRet.data.data
     // console.log(data)
-    if (glm_ret.data.code !== 200) {
-      console.error(glm_ret.data)
+    if (glmRet.data.code !== 200) {
+      console.error(glmRet.data)
       console.error('GLM官方返回的错误')
-      throw glm_ret.data
+      throw glmRet.data
     }
     let content = data.choices[0].content as string
     return content.replace(/\\+n/g, '\n').replace(/\\+/g, '').replace(/\\"/g, '"').replace(/^[\s*\"\s*]*|[\s*\"\s*]*$/g, '')
   }
 
   // GLM返回的JSON字符串转JSON，这里返回的是Object
-  GLM2JSON(glm_ret: BaseObject): BaseObject {
-    let data = glm_ret.data.data
-    if (glm_ret.data.code !== 200) {
-      console.error(glm_ret.data)
+  GLM2JSON(glmRet: BaseObject): BaseObject {
+    let data = glmRet.data.data
+    if (glmRet.data.code !== 200) {
+      console.error(glmRet.data)
     }
     let content = data.choices[0].content as string
     // console.log(content)
@@ -70,17 +68,15 @@ module.exports = class ZhipuAI implements ZhipuAIInterface {
   }
 
   // GLM返回的JSON字符串转JSON，这里返回的是Array
-  GLM2JSONArray(glm_ret: BaseObject): BaseObject[] {
+  GLM2JSONArray(glmRet: BaseObject): BaseObject[] {
     interface OutlineInterface {
       title: string, subs?: { title: string }[]
     }
-    let data = glm_ret.data.data
-    if (glm_ret.data.code !== 200) {
-      console.error(glm_ret.data)
+    let data = glmRet.data.data
+    if (glmRet.data.code !== 200) {
+      console.error(glmRet.data)
     }
     let content: string = data.choices[0].content.trim()
-    content = content.replace(/\\n/g, '\n')
-    console.log(content)
     console.log('转JSON的原始字符串')
     let result: OutlineInterface[] = []
     let temp_item: OutlineInterface | undefined
