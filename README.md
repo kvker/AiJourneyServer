@@ -28,4 +28,6 @@ TencentSDKSecretKey 腾讯云的key
 
 ## 待办
 
-- [ ] 暂无
+- [x] 支持GLM的SSE
+- [ ] 支持将文本转为wav或mp3
+- [ ] ?支持将wav或mp3转为文本
