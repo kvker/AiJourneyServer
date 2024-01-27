@@ -20,7 +20,7 @@ AV.init(options)
 // Comment the following line if you do not want to use masterKey.
 AV.Cloud.useMasterKey()
 
-// const indexRouter = require('./routes/index')
+const indexRouter = require('./routes/index')
 const apiRouter = require('./routes/api')
 
 // 需要在LC初始化后面
@@ -55,7 +55,7 @@ app.options('*', function (req, res) {
   res.sendStatus(200)
 })
 
-// app.use('/', indexRouter)
+app.use('/', indexRouter)
 app.use('/api', apiRouter)
 
 // catch 404 and forward to error handler
