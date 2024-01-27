@@ -3,7 +3,7 @@ const express = require('express')
 const path = require('path')
 const cookieParser = require('cookie-parser')
 const logger = require('morgan')
-const timeout = require('connect-timeout')
+// const timeout = require('connect-timeout')
 
 const AV = require('leanengine')
 
@@ -20,7 +20,7 @@ AV.init(options)
 // Comment the following line if you do not want to use masterKey.
 AV.Cloud.useMasterKey()
 
-const indexRouter = require('./routes/index')
+// const indexRouter = require('./routes/index')
 const apiRouter = require('./routes/api')
 
 // 需要在LC初始化后面
@@ -36,7 +36,7 @@ const app = express()
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 
-app.use(timeout('300s'))
+// app.use(timeout('300s'))
 app.use(logger('dev'))
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true,limit:'10mb' }))
@@ -44,19 +44,18 @@ app.use(cookieParser())
 // app.use(express.static(path.join(__dirname, 'public')))
 
 // express放行跨域
-app.all('*', function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Headers', '*')
-  res.header('Access-Control-Allow-Methods', '*')
-  res.header('Content-Type', 'application/json;charset=utf-8')
-  next()
-})
+// app.all('*', function (req, res, next) {
+//   res.header('Access-Control-Allow-Origin', '*')
+//   res.header('Access-Control-Allow-Headers', '*')
+//   res.header('Access-Control-Allow-Methods', '*')
+//   next()
+// })
 
 app.options('*', function (req, res) {
   res.sendStatus(200)
 })
 
-app.use('/', indexRouter)
+// app.use('/', indexRouter)
 app.use('/api', apiRouter)
 
 // catch 404 and forward to error handler
