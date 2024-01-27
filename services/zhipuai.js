@@ -13,81 +13,35 @@ const axios = require('axios');
 module.exports = class ZhipuAI {
     constructor() {
         this.Url = 'https://open.bigmodel.cn/api/paas/v3/model-api/chatglm_turbo/invoke';
-        this.SSEUrl = 'https://open.bigmodel.cn/api/paas/v3/model-api/chatglm_turbo/sse-invoke';
-        this.charactorUrl = 'https://open.bigmodel.cn/api/paas/v3/model-api/characterglm/invoke';
-        this.charactorSSEUrl = 'https://open.bigmodel.cn/api/paas/v3/model-api/characterglm/sse-invoke';
+        this.SSEUrl = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
     }
     getAccessToken() {
         return axios(rule.bj_api_address + '/api/access_token/zhipuai')
             .then((ret) => {
-            // console.log(ret.data.data)
+            console.log(ret.data.data);
             return ret.data.data;
         });
     }
-    completions(messages, params) {
+    completions(messages) {
         return __awaiter(this, void 0, void 0, function* () {
-            const access_token = yield this.getAccessToken();
+            const accessToken = yield this.getAccessToken();
             // console.log(params)
-            let data = Object.assign({ prompt: messages, max_tokens: 4096 }, (params.extar_data || {}));
-            // console.log(JSON.stringify(data))
-            const response = yield axios.post(params.url, data, Object.assign({ headers: Object.assign({ "Authorization": access_token }, params.headers), timeout: 300000 }, params.options));
-            return response;
-        });
-    }
-    completionsLite(messages) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return this.completions(messages, { url: this.Url, headers: {}, options: {} });
-        });
-    }
-    completionsLiteSSE(messages) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return this.completions(messages, { url: this.SSEUrl, headers: { "Accept": "text/event-stream", }, options: { responseType: 'stream', } });
-        });
-    }
-    completionsStd(messages) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return this.completions(messages, { url: this.Url, headers: {}, options: {} });
-        });
-    }
-    completionsStdSSE(messages) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return this.completions(messages, { url: this.SSEUrl, headers: { "Accept": "text/event-stream", }, options: { responseType: 'stream', } });
-        });
-    }
-    completionsPro(messages) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return this.completions(messages, { url: this.Url, headers: {}, options: {} });
-        });
-    }
-    completionsProSSE(messages) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return this.completions(messages, { url: this.SSEUrl, headers: { "Accept": "text/event-stream", }, options: { responseType: 'stream', } });
-        });
-    }
-    completionsCharacter(messages, meta) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return this.completions(messages, {
-                url: this.charactorUrl, headers: {}, options: {}, extar_data: {
-                    meta
-                }
+            // console.log(this.SSEUrl)
+            const data = {
+                model: "glm-3-turbo",
+                messages,
+                max_tokens: 4096,
+                stream: true,
+            };
+            console.log(JSON.stringify(data));
+            return yield axios.post(this.SSEUrl, data, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": accessToken,
+                },
+                responseType: 'stream',
             });
         });
-    }
-    completionsCharacterSSE(messages, meta) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return this.completions(messages, {
-                url: this.charactorSSEUrl, headers: {
-                    "Accept": "text/event-stream",
-                }, options: {
-                    responseType: 'stream',
-                }, extar_data: {
-                    meta
-                }
-            });
-        });
-    }
-    baseSSE(messages) {
-        return this.completions(messages, { url: this.SSEUrl, headers: { "Accept": "text/event-stream", }, options: { responseType: 'stream' } });
     }
     GLM2String(glm_ret) {
         let data = glm_ret.data.data;

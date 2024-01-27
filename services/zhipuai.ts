@@ -11,85 +11,34 @@ interface ZhipuAIInterface {
 
 module.exports = class ZhipuAI implements ZhipuAIInterface {
   Url = 'https://open.bigmodel.cn/api/paas/v3/model-api/chatglm_turbo/invoke'
-  SSEUrl = 'https://open.bigmodel.cn/api/paas/v3/model-api/chatglm_turbo/sse-invoke'
-  charactorUrl = 'https://open.bigmodel.cn/api/paas/v3/model-api/characterglm/invoke'
-  charactorSSEUrl = 'https://open.bigmodel.cn/api/paas/v3/model-api/characterglm/sse-invoke'
+  SSEUrl = 'https://open.bigmodel.cn/api/paas/v4/chat/completions'
 
   getAccessToken(): Promise<string> {
     return axios(rule.bj_api_address + '/api/access_token/zhipuai')
       .then((ret: any) => {
-        // console.log(ret.data.data)
+        console.log(ret.data.data)
         return ret.data.data
       })
   }
 
-  async completions(messages: GLMMessage[], params: { url: string, headers: Object, options: Object, extar_data?: Object }): Promise<any> {
-    const access_token = await this.getAccessToken()
+  async completions(messages: GLMMessage[]): Promise<any> {
+    const accessToken = await this.getAccessToken()
     // console.log(params)
-    let data = {
-      prompt: messages,
+    // console.log(this.SSEUrl)
+    const data = {
+      model: "glm-3-turbo",
+      messages,
       max_tokens: 4096,
-      ...(params.extar_data || {}),
+      stream: true,
     }
-    // console.log(JSON.stringify(data))
-    const response = await axios.post(params.url, data, {
+    console.log(JSON.stringify(data))
+    return await axios.post(this.SSEUrl, data, {
       headers: {
-        "Authorization": access_token,
-        ...params.headers,
+        "Content-Type": "application/json",
+        "Authorization": accessToken,
       },
-      timeout: 300000,
-      ...params.options,
+      responseType: 'stream',
     })
-
-    return response
-  }
-
-  async completionsLite(messages: GLMMessage[]): Promise<any> {
-    return this.completions(messages, { url: this.Url, headers: {}, options: {} })
-  }
-
-  async completionsLiteSSE(messages: GLMMessage[]): Promise<any> {
-    return this.completions(messages, { url: this.SSEUrl, headers: { "Accept": "text/event-stream", }, options: { responseType: 'stream', } })
-  }
-
-  async completionsStd(messages: GLMMessage[]): Promise<any> {
-    return this.completions(messages, { url: this.Url, headers: {}, options: {} })
-  }
-
-  async completionsStdSSE(messages: GLMMessage[]): Promise<any> {
-    return this.completions(messages, { url: this.SSEUrl, headers: { "Accept": "text/event-stream", }, options: { responseType: 'stream', } })
-  }
-
-  async completionsPro(messages: GLMMessage[]): Promise<any> {
-    return this.completions(messages, { url: this.Url, headers: {}, options: {} })
-  }
-
-  async completionsProSSE(messages: GLMMessage[]): Promise<any> {
-    return this.completions(messages, { url: this.SSEUrl, headers: { "Accept": "text/event-stream", }, options: { responseType: 'stream', } })
-  }
-
-  async completionsCharacter(messages: GLMMessage[], meta: GLMCharacterMeta): Promise<any> {
-    return this.completions(messages, {
-      url: this.charactorUrl, headers: {}, options: {}, extar_data: {
-        meta
-      }
-    })
-  }
-
-  async completionsCharacterSSE(messages: GLMMessage[], meta: GLMCharacterMeta): Promise<any> {
-    return this.completions(messages, {
-      url: this.charactorSSEUrl, headers: {
-        "Accept": "text/event-stream",
-      }, options: {
-        responseType: 'stream',
-      }, extar_data: {
-        meta
-      }
-    })
-  }
-
-  baseSSE(messages: GLMMessage[]) {
-    return this.completions(messages, { url: this.SSEUrl, headers: { "Accept": "text/event-stream", }, options: { responseType: 'stream' } })
   }
 
   GLM2String(glm_ret: BaseObject): string {
