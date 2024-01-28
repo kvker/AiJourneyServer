@@ -152,7 +152,7 @@ class TencentSdk {
     console.log('长文本语音合成参数', data)
     let ret = await client.CreateTtsTask(data)
     // 查询结果
-    for (const iterator of [1, 2, 3, 4, 5]) {
+    for (const iterator of new Array(12)) {
       ret = await this.getTtsStatus(ret.Data.TaskId)
       console.log(ret)
       if (ret.Data.Status === 2) {
@@ -161,7 +161,7 @@ class TencentSdk {
       await new Promise((resolve) => {
         setTimeout(() => {
           resolve('')
-        }, 3000)
+        }, 5000)
       })
     }
     // ret.Data.ResultUrl 提供的有效时间只有1天,千万注意
