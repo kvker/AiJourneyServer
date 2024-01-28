@@ -3,7 +3,7 @@ const express = require('express')
 const path = require('path')
 const cookieParser = require('cookie-parser')
 const logger = require('morgan')
-// const timeout = require('connect-timeout')
+const timeout = require('connect-timeout')
 
 const AV = require('leanengine')
 
@@ -36,7 +36,7 @@ const app = express()
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 
-// app.use(timeout('300s'))
+app.use(timeout('120s'))
 app.use(logger('dev'))
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true,limit:'10mb' }))
