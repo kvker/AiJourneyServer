@@ -22,9 +22,9 @@ interface TencentcloudConfig {
 }
 
 interface TencentVoice2TextParams {
-  voice_type: string
+  voiceType: string
   base64: string
-  file_size: number
+  fileSize: number
 }
 
 interface TencentText2VoiceParams {
@@ -52,13 +52,13 @@ class TencentSdk {
 
   }
   async voice2Text(params: TencentVoice2TextParams) {
-    const { voice_type, base64, file_size, } = params
+    const { voiceType, base64, fileSize, } = params
     const clientConfig = {
       credential: {
         secretId: this.config.secretId,
         secretKey: this.config.secretKey,
       },
-      region: "",
+      region: "ap-beijing",
       profile: {
         httpProfile: {
           endpoint: "asr.tencentcloudapi.com",
@@ -69,9 +69,9 @@ class TencentSdk {
     const data = {
       "EngSerViceType": "16k_zh",
       "SourceType": 1,
-      "VoiceFormat": voice_type,
+      "VoiceFormat": voiceType,
       "Data": base64,
-      "DataLen": file_size,
+      "DataLen": fileSize,
     }
 
     try {
@@ -108,27 +108,19 @@ class TencentSdk {
     const client = new TtsClient(clientConfig)
     let data: TencentText2VoiceParams = {
       SessionId: crypto.randomUUID(),
-      Text, Volume, Speed, VoiceType, Codec
+      Text,
+      Volume,
+      Speed,
+      VoiceType,
+      Codec,
     }
     if (EmotionCategory) {
       data.EmotionCategory = EmotionCategory
       data.EmotionIntensity = EmotionIntensity || 100
     }
     console.log('语音合成参数', data)
-    try {
-      let ret = await client.TextToVoice(data).then(
-        (data: any) => {
-          return data
-        },
-        (err: Error) => {
-          console.error("error", err)
-          return Promise.reject(err)
-        }
-      )
-      return ret
-    } catch (error) {
-      throw error
-    }
+    let ret = await client.TextToVoice(data)
+    return ret
   }
 
   async longText2Voice(params: TencentText2VoiceParams) {

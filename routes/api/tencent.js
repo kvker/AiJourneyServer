@@ -12,24 +12,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const router = require('express').Router();
 const TencentSdk = require('../../services/tencent');
 const tencentSdk = new TencentSdk();
-router.post('/txVoice2Text', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/voice2text', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const params = req.body;
-    let { base64, file_size, voice_type = 'wav' } = params;
-    if (!base64 || !file_size) {
+    let { base64, fileSize, voiceType = 'wav' } = params;
+    if (!base64 || !fileSize) {
         res.status(500).send(rule.fail('参数错误'));
         return;
     }
     try {
-        let ret = yield tencentSdk.voice2Text({ base64, file_size, voice_type });
+        let ret = yield tencentSdk.voice2Text({ base64, fileSize, voiceType });
         res.send(rule.success(ret));
     }
     catch (error) {
         res.status(400).send(error);
     }
 }));
-router.post('/txText2Voice', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/text2voice', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const params = req.body;
-    let { text, volume = 1, speed = 0, voice_type = '10510000', codec = 'wav', } = params;
+    let { text, volume = 1, speed = 0, voiceType = 10510000, codec = 'wav', } = params;
     if (!text) {
         res.status(500).send(rule.fail('参数错误'));
         return;
@@ -39,12 +39,13 @@ router.post('/txText2Voice', (req, res) => __awaiter(void 0, void 0, void 0, fun
             Text: text,
             Volume: volume,
             Speed: speed,
-            VoiceType: voice_type,
+            VoiceType: voiceType,
             Codec: codec,
         });
         res.send(rule.success(ret));
     }
     catch (error) {
+        console.error(error);
         res.status(400).send(error);
     }
 }));

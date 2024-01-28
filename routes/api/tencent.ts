@@ -4,42 +4,42 @@ const TencentSdk = require('../../services/tencent')
 const tencentSdk = new TencentSdk()
 type TxVoiceParams = {
   base64: string
-  file_size: number
-  voice_type: string
+  fileSize: number
+  voiceType: string
 }
 
 type TxText2VoiceParams = {
   text: string
   volume: number
   speed: number
-  voice_type: number
+  voiceType: number
   codec: string
   emotion_category?: string
   emotion_intensity?: number
 }
 
-router.post('/txVoice2Text', async (req: Request, res: Response) => {
+router.post('/voice2text', async (req: Request, res: Response) => {
   const params = req.body as TxVoiceParams
 
-  let { base64, file_size, voice_type = 'wav' } = params
-  if (!base64 || !file_size) {
+  let { base64, fileSize, voiceType = 'wav' } = params
+  if (!base64 || !fileSize) {
     res.status(500).send(rule.fail('参数错误'))
     return
   }
   try {
-    let ret = await tencentSdk.voice2Text({ base64, file_size, voice_type })
+    let ret = await tencentSdk.voice2Text({ base64, fileSize, voiceType })
     res.send(rule.success(ret))
   } catch (error) {
     res.status(400).send(error)
   }
 })
 
-router.post('/txText2Voice', async (req: Request, res: Response) => {
+router.post('/text2voice', async (req: Request, res: Response) => {
   const params = req.body as TxText2VoiceParams
 
   let { text, volume = 1,
     speed = 0,
-    voice_type = '10510000',
+    voiceType = 10510000,
     codec = 'wav',
   } = params
   if (!text) {
@@ -51,11 +51,12 @@ router.post('/txText2Voice', async (req: Request, res: Response) => {
       Text: text,
       Volume: volume,
       Speed: speed,
-      VoiceType: voice_type,
+      VoiceType: voiceType,
       Codec: codec,
     })
     res.send(rule.success(ret))
   } catch (error) {
+    console.error(error)
     res.status(400).send(error)
   }
 })

@@ -34,13 +34,13 @@ class TencentSdk {
     }
     voice2Text(params) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { voice_type, base64, file_size, } = params;
+            const { voiceType, base64, fileSize, } = params;
             const clientConfig = {
                 credential: {
                     secretId: this.config.secretId,
                     secretKey: this.config.secretKey,
                 },
-                region: "",
+                region: "ap-beijing",
                 profile: {
                     httpProfile: {
                         endpoint: "asr.tencentcloudapi.com",
@@ -51,9 +51,9 @@ class TencentSdk {
             const data = {
                 "EngSerViceType": "16k_zh",
                 "SourceType": 1,
-                "VoiceFormat": voice_type,
+                "VoiceFormat": voiceType,
                 "Data": base64,
-                "DataLen": file_size,
+                "DataLen": fileSize,
             };
             try {
                 let ret = yield client.SentenceRecognition(data).then((data) => {
@@ -88,25 +88,19 @@ class TencentSdk {
             const client = new TtsClient(clientConfig);
             let data = {
                 SessionId: crypto.randomUUID(),
-                Text, Volume, Speed, VoiceType, Codec
+                Text,
+                Volume,
+                Speed,
+                VoiceType,
+                Codec,
             };
             if (EmotionCategory) {
                 data.EmotionCategory = EmotionCategory;
                 data.EmotionIntensity = EmotionIntensity || 100;
             }
             console.log('语音合成参数', data);
-            try {
-                let ret = yield client.TextToVoice(data).then((data) => {
-                    return data;
-                }, (err) => {
-                    console.error("error", err);
-                    return Promise.reject(err);
-                });
-                return ret;
-            }
-            catch (error) {
-                throw error;
-            }
+            let ret = yield client.TextToVoice(data);
+            return ret;
         });
     }
     longText2Voice(params) {
