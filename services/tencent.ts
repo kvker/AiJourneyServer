@@ -4,6 +4,9 @@ const AsrClient = tencentcloud.asr.v20190614.Client
 const tencentcloudtts = require("tencentcloud-sdk-nodejs-tts")
 const crypto = require("crypto")
 const COS = require('cos-nodejs-sdk-v5')
+import https from 'https'
+import { Buffer } from 'buffer'
+
 const cos_config = {
   bucket: 'contentsafe-1251835910',
   region: 'ap-beijing'
@@ -119,8 +122,7 @@ class TencentSdk {
       data.EmotionIntensity = EmotionIntensity || 100
     }
     console.log('语音合成参数', data)
-    let ret = await client.TextToVoice(data)
-    return ret
+    return (await client.TextToVoice(data)).Audio
   }
 
   async longText2Voice(params: TencentText2VoiceParams) {
@@ -141,27 +143,58 @@ class TencentSdk {
     let data: TencentLongText2VoiceParams = {
       Text, Volume, Speed, VoiceType, Codec,
       ModelType: 1,
-      CallbackUrl: 'https://api.kvker.com/api/tencent/longText2VoiceCallback'
+      // CallbackUrl: 'https://api.kvker.com/api/tencent/longText2VoiceCallback'
     }
     if (EmotionCategory) {
       data.EmotionCategory = EmotionCategory
       data.EmotionIntensity = EmotionIntensity || 100
     }
     console.log('长文本语音合成参数', data)
-    try {
-      let ret = await client.CreateTtsTask(data).then(
-        (data: any) => {
-          return data
-        },
-        (err: Error) => {
-          console.error("error", err)
-          return Promise.reject(err)
-        }
-      )
-      return ret
-    } catch (error) {
-      throw error
+    let ret = await client.CreateTtsTask(data)
+    // 查询结果
+    for (const iterator of [1, 2, 3, 4, 5]) {
+      ret = await this.getTtsStatus(ret.Data.TaskId)
+      console.log(ret)
+      if (ret.Data.Status === 2) {
+        break
+      }
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve('')
+        }, 3000)
+      })
     }
+    // ret.Data.ResultUrl 提供的有效时间只有1天,千万注意
+    const base64 = await this.url2Base64(ret.Data.ResultUrl)
+    return base64
+  }
+
+  url2Base64(url: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      https.get(url, (res) => {
+        const data: any[] = []
+        res.on('data', (chunk) => data.push(chunk))
+        res.on('end', () => resolve(Buffer.concat(data).toString('base64')))
+        res.on('error', reject);
+      })
+    })
+  }
+
+  async getTtsStatus(taskId: string) {
+    const clientConfig = {
+      credential: {
+        secretId: this.config.secretId,
+        secretKey: this.config.secretKey,
+      },
+      region: "",
+      profile: {
+        httpProfile: {
+          endpoint: "tts.tencentcloudapi.com",
+        },
+      },
+    }
+    const client = new TtsClient(clientConfig)
+    return await client.DescribeTtsTaskStatus({ TaskId: taskId })
   }
 
   /**

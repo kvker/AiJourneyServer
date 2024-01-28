@@ -8,12 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const tencentcloud = require("tencentcloud-sdk-nodejs");
 const AsrClient = tencentcloud.asr.v20190614.Client;
 const tencentcloudtts = require("tencentcloud-sdk-nodejs-tts");
 const crypto = require("crypto");
 const COS = require('cos-nodejs-sdk-v5');
+const https_1 = __importDefault(require("https"));
+const buffer_1 = require("buffer");
 const cos_config = {
     bucket: 'contentsafe-1251835910',
     region: 'ap-beijing'
@@ -99,8 +104,7 @@ class TencentSdk {
                 data.EmotionIntensity = EmotionIntensity || 100;
             }
             console.log('语音合成参数', data);
-            let ret = yield client.TextToVoice(data);
-            return ret;
+            return (yield client.TextToVoice(data)).Audio;
         });
     }
     longText2Voice(params) {
@@ -122,25 +126,58 @@ class TencentSdk {
             let data = {
                 Text, Volume, Speed, VoiceType, Codec,
                 ModelType: 1,
-                CallbackUrl: 'https://api.kvker.com/api/tencent/longText2VoiceCallback'
+                // CallbackUrl: 'https://api.kvker.com/api/tencent/longText2VoiceCallback'
             };
             if (EmotionCategory) {
                 data.EmotionCategory = EmotionCategory;
                 data.EmotionIntensity = EmotionIntensity || 100;
             }
             console.log('长文本语音合成参数', data);
-            try {
-                let ret = yield client.CreateTtsTask(data).then((data) => {
-                    return data;
-                }, (err) => {
-                    console.error("error", err);
-                    return Promise.reject(err);
+            let ret = yield client.CreateTtsTask(data);
+            // 查询结果
+            for (const iterator of [1, 2, 3, 4, 5]) {
+                ret = yield this.getTtsStatus(ret.Data.TaskId);
+                console.log(ret);
+                if (ret.Data.Status === 2) {
+                    break;
+                }
+                yield new Promise((resolve) => {
+                    setTimeout(() => {
+                        resolve('');
+                    }, 3000);
                 });
-                return ret;
             }
-            catch (error) {
-                throw error;
-            }
+            // ret.Data.ResultUrl 提供的有效时间只有1天,千万注意
+            const base64 = yield this.url2Base64(ret.Data.ResultUrl);
+            return base64;
+        });
+    }
+    url2Base64(url) {
+        return new Promise((resolve, reject) => {
+            https_1.default.get(url, (res) => {
+                const data = [];
+                res.on('data', (chunk) => data.push(chunk));
+                res.on('end', () => resolve(buffer_1.Buffer.concat(data).toString('base64')));
+                res.on('error', reject);
+            });
+        });
+    }
+    getTtsStatus(taskId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const clientConfig = {
+                credential: {
+                    secretId: this.config.secretId,
+                    secretKey: this.config.secretKey,
+                },
+                region: "",
+                profile: {
+                    httpProfile: {
+                        endpoint: "tts.tencentcloudapi.com",
+                    },
+                },
+            };
+            const client = new TtsClient(clientConfig);
+            return yield client.DescribeTtsTaskStatus({ TaskId: taskId });
         });
     }
     /**

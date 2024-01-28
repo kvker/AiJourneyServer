@@ -35,14 +35,14 @@ router.post('/text2voice', (req, res) => __awaiter(void 0, void 0, void 0, funct
         return;
     }
     try {
-        let ret = yield tencentSdk.text2Voice({
+        let base64 = yield tencentSdk.longText2Voice({
             Text: text,
             Volume: volume,
             Speed: speed,
             VoiceType: voiceType,
             Codec: codec,
         });
-        res.send(rule.success(ret));
+        res.send(rule.success({ base64 }));
     }
     catch (error) {
         console.error(error);

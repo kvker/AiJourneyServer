@@ -47,14 +47,14 @@ router.post('/text2voice', async (req: Request, res: Response) => {
     return
   }
   try {
-    let ret = await tencentSdk.text2Voice({
+    let base64 = await tencentSdk.longText2Voice({
       Text: text,
       Volume: volume,
       Speed: speed,
       VoiceType: voiceType,
       Codec: codec,
     })
-    res.send(rule.success(ret))
+    res.send(rule.success({ base64 }))
   } catch (error) {
     console.error(error)
     res.status(400).send(error)
