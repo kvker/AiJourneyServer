@@ -10,7 +10,7 @@ interface ZhipuAIInterface {
 }
 
 module.exports = class ZhipuAI implements ZhipuAIInterface {
-  Url = 'https://open.bigmodel.cn/api/paas/v4/chat/completions'
+  url = 'https://open.bigmodel.cn/api/paas/v4/chat/completions'
 
   getAccessToken(): Promise<string> {
     return axios(rule.bj_api_address + '/api/access_token/zhipuai')
@@ -24,19 +24,26 @@ module.exports = class ZhipuAI implements ZhipuAIInterface {
     const accessToken = await this.getAccessToken()
     const { model, stream } = options
     const data = {
-      model,
+      model: model || 'glm-3-turbo',
       messages,
       max_tokens: 4096,
       stream,
     }
-    // console.log(JSON.stringify(data))
-    return await axios.post(this.Url, data, {
+    const params = {
       headers: {
         "Content-Type": "application/json",
         "Authorization": accessToken,
       },
-      responseType: 'stream',
-    })
+      responseType: ''
+    }
+    if (stream) {
+      params.responseType = 'stream'
+    }
+    return await axios.post(this.url, data, params)
+  }
+
+  async completionsSync(messages: GLMMessage[], options = { model: "glm-3-turbo", stream: true, }): Promise<any> {
+    return this.completions(messages, { ...options, stream: false, })
   }
 
   GLM2String(glmRet: BaseObject): string {
