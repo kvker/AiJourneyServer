@@ -23,7 +23,7 @@ async function chatglmBase(req: Request, res: Response, sendMessages: GLMMessage
     // console.log(JSON.stringify(input))
     console.log('Application对话开始')
     const response = await zhipuai.completions(sendMessages)
-    console.log({ response })
+    // console.log({ response })
     response.data.on('data', (chunk: string) => {
       // console.log({ chunk })
       if (needEncode) chunk = encodeURIComponent(chunk)
