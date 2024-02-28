@@ -13,7 +13,7 @@ module.exports = class ZhipuAI implements ZhipuAIInterface {
   url = 'https://open.bigmodel.cn/api/paas/v4/chat/completions'
 
   getAccessToken(): Promise<string> {
-    return axios(rule.bj_api_address + '/api/access_token/zhipuai')
+    return axios(rule.tokenUrl + '/api/chatglm')
       .then((ret: any) => {
         // console.log(ret.data.data)
         return ret.data.data

@@ -14,6 +14,7 @@ const rule: Rule = {
   warning_string: '因相关法律和要求，相关提问信息不予展示。（包含黄赌毒、港台等地缘信息）',
   is_stage,
   bj_api_address: process.env.BJAPIAddress as string,
+  tokenUrl: process.env.TOKEN_URL as string,
   headers: {
     'X-LC-Id': process.env.LEANCLOUD_APP_ID,
     'X-LC-Key': process.env.LEANCLOUD_APP_KEY,

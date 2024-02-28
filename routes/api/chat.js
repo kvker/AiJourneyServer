@@ -31,7 +31,7 @@ function chatglmBase(req, res, sendMessages) {
             // console.log(JSON.stringify(input))
             console.log('Application对话开始');
             const response = yield zhipuai.completions(sendMessages);
-            console.log({ response });
+            // console.log({ response })
             response.data.on('data', (chunk) => {
                 // console.log({ chunk })
                 if (needEncode)

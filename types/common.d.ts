@@ -107,6 +107,7 @@ interface Rule {
   warning_string: string,
   is_stage: boolean,
   bj_api_address: url,
+  tokenUrl: string,
   headers: {
     'X-LC-Id': string | undefined
     'X-LC-Key': string | undefined

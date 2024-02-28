@@ -12,10 +12,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const axios = require('axios');
 module.exports = class ZhipuAI {
     constructor() {
-        this.Url = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
+        this.url = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
     }
     getAccessToken() {
-        return axios(rule.bj_api_address + '/api/access_token/zhipuai')
+        return axios(rule.tokenUrl + '/api/chatglm')
             .then((ret) => {
             // console.log(ret.data.data)
             return ret.data.data;
@@ -26,19 +26,27 @@ module.exports = class ZhipuAI {
             const accessToken = yield this.getAccessToken();
             const { model, stream } = options;
             const data = {
-                model,
+                model: model || 'glm-3-turbo',
                 messages,
                 max_tokens: 4096,
                 stream,
             };
-            // console.log(JSON.stringify(data))
-            return yield axios.post(this.Url, data, {
+            const params = {
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": accessToken,
                 },
-                responseType: 'stream',
-            });
+                responseType: ''
+            };
+            if (stream) {
+                params.responseType = 'stream';
+            }
+            return yield axios.post(this.url, data, params);
+        });
+    }
+    completionsSync(messages, options = { model: "glm-3-turbo", stream: true, }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.completions(messages, Object.assign(Object.assign({}, options), { stream: false }));
         });
     }
     GLM2String(glmRet) {
